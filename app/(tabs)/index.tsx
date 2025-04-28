@@ -1,74 +1,88 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
+import { useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
 export default function HomeScreen() {
+  const [todos, setTodos] = useState([
+    { id: '1', text: 'Belajar React Native', done: false },
+    { id: '2', text: 'Kerjakan tugas kuliah', done: true },
+    { id: '3', text: 'Cek email dosen', done: false },
+  ]);
+
+  const toggleDone = (id: string) => {
+    setTodos(prev =>
+      prev.map(todo =>
+        todo.id === id ? { ...todo, done: !todo.done } : todo
+      )
+    );
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <ThemedView style={styles.container}>
+      <ThemedText type="title" style={styles.title}>To-Do List</ThemedText>
+      <FlatList
+        data={todos}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.todoItem}
+            onPress={() => toggleDone(item.id)}
+          >
+            <View style={[styles.checkbox, item.done && styles.checkboxChecked]}>
+              {item.done && <Text style={styles.checkmark}>✓</Text>}
+            </View>
+            <Text style={[styles.todoText, item.done && styles.todoTextDone]}>
+              {item.text}
+            </Text>
+          </TouchableOpacity>
+        )}
+      />
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    padding: 20,
+    gap: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  todoItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderWidth: 2,
+    borderColor: '#666',
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  checkboxChecked: {
+    backgroundColor: '#4CAF50',
+    borderColor: '#4CAF50',
+  },
+  checkmark: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  todoText: {
+    fontSize: 18,
+    marginLeft: 12,
+  },
+  todoTextDone: {
+    textDecorationLine: 'line-through',
+    color: '#999',
   },
 });
