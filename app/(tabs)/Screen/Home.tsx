@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
-import TaskItem from "../components/TaskItem";
-import useTodoStore from "../hooks/useTodoStore";
+import TaskItem from "../../../components/TaskItem";
+import useTodoStore from "../../../hooks/useTodoStore";
 
 // Mendefinisikan tipe data untuk Todo
 type Todo = {
